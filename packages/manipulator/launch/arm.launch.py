@@ -24,9 +24,9 @@ def generate_launch_description():
 
     # Configure a node for the point_publisher.
     node_demo = Node(
-        name       = 'ArmControl',
+        name       = 'Arm',
         package    = 'manipulator',
-        executable = 'ArmControl',
+        executable = 'Arm',
         output     = 'screen',
         on_exit    = Shutdown())
 

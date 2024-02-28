@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'ArmControl = manipulator.ArmControl:main'
+            'Arm = manipulator.Arm:main'
         ],
     },
 )
