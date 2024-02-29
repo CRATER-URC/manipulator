@@ -45,7 +45,7 @@
     </visual>
   </link>
 
-  <joint name="basetomotor0" type="fixed">
+  <joint name="base0tomotor" type="fixed">
     <parent link="joint0base"/>
     <child  link="joint0motor"/>
     <origin xyz="0 0 -0.05715" rpy="0 0 0"/>

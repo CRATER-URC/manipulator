@@ -16,13 +16,26 @@ def generate_launch_description():
     # LOCATE FILES
 
     # Locate the RVIZ configuration file.
-    rvizcfg = os.path.join(pkgdir('manipulator'), 'rviz/viewmarkers.rviz')
+    rvizcfg = os.path.join(pkgdir('manipulator'), 'rviz/viewurdf.rviz')
+
+    # Locate/load the robot's URDF file (XML).
+    urdf = os.path.join(pkgdir('manipulator'), 'urdf/arm.urdf')
+    with open(urdf, 'r') as file:
+        robot_description = file.read()
 
 
     ######################################################################
     # PREPARE THE LAUNCH ELEMENTS
 
     # Configure a node for the point_publisher.
+    node_robot_state_publisher_COMMAND = Node(
+        name       = 'robot_state_publisher', 
+        package    = 'robot_state_publisher',
+        executable = 'robot_state_publisher',
+        output     = 'screen',
+        parameters = [{'robot_description': robot_description}],
+        remappings = [('/joint_states', '/joint_commands')])
+    
     node_demo = Node(
         name       = 'Arm',
         package    = 'manipulator',
@@ -46,6 +59,7 @@ def generate_launch_description():
     return LaunchDescription([
 
         # Start the demo and RVIZ
+        node_robot_state_publisher_COMMAND, 
         node_demo,
         node_rviz,
     ])

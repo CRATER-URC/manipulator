@@ -1,8 +1,6 @@
-'''KinematicChain.py
+'''KinematicChainSol.py
 
-   This is the skeleton code for Kinematic Chains (HW5 Problem 5).
-
-   PLEASE EDIT/FIX.  See "FIXME" tags!
+   This is the solution code for Kinematic Chains (HW5 Problem 5).
 
    chain = KinematicChain(node, basefame, tipframe, expectedjointnames)
 
@@ -22,7 +20,6 @@
 '''
 
 import enum
-from manipulator.TransformHelpers import p_from_T
 import rclpy
 import numpy as np
 
@@ -211,8 +208,8 @@ class KinematicChain():
     def fkin(self, q):
         # Check the number of joints
         if (len(q) != self.dofs):
-            self.error("Number of joint angles (%d) does not chain (%d)",
-                       len(q), self.dofs)
+            self.error("Number of joint angles (%d) does not chain (%d)" % (
+                       len(q), self.dofs))
 
         # Clear any data from past invocations (just to be safe).
         for s in self.steps:
@@ -224,28 +221,16 @@ class KinematicChain():
         # Walk the chain, one step at a time.  Record the T transform
         # w.r.t. world for each step.
         for s in self.steps:
-            # FIXME - Note the step s contains:
-            #   s.Tshift     Transform w.r.t. the previous frame
-            #   s.elocal     Joint axis in the local frame
-            #   s.dof        Joint number
-            #   q[s.dof]     Joint position (angle for revolute, displacement for linear)
-            
-            # Take action based on the joint type.
+            # Always apply the shift.
+            T = T @ s.Tshift
+
+            # For active joints, also apply the joint movement.
             if s.type is Joint.REVOLUTE:
-                # Revolute is a rotation: 
-                R = Rote(s.elocal, q[s.dof]) #is q[s.dof] the angle that i am rotation about?
-                p = p_from_T(s.Tshift)
-                s.Tshift = T_from_Rp(R, p) 
-                T = T @ s.Tshift
+                # Revolute is a rotation:
+                T = T @ T_from_Rp(Rote(s.elocal, q[s.dof]), pzero())
             elif s.type is Joint.LINEAR:
                 # Linear is a translation:
-                R = R_from_T(s.Tshift)
-                p = s.elocal * q[s.dof]
-                s.Tshift = T_from_Rp(R, p)
-                T = T @ s.Tshift
-            else:
-                # Fixed is only shifting.
-                T = T @ s.Tshift
+                T = T @ T_from_Rp(Reye(), s.elocal * q[s.dof])
 
             # Store the info (w.r.t. world frame) into the step.
             s.T = T
@@ -253,7 +238,7 @@ class KinematicChain():
             s.R = R_from_T(T)
             s.e = R_from_T(T) @ s.elocal
 
-        # Collect the tip information w.r.t. world!
+        # Collect the tip information.
         ptip = p_from_T(T)
         Rtip = R_from_T(T)
 
@@ -261,19 +246,14 @@ class KinematicChain():
         Jv = np.zeros((3,self.dofs))
         Jw = np.zeros((3,self.dofs))
         for s in self.steps:
-            # FIXME AGAIN.  From the above, the step now includes:
-            #   s.p     Position w.r.t. world
-            #   s.e     Joint axis w.r.t. world
-            
-            # Take action based on the joint type.
             if s.type is Joint.REVOLUTE:
                 # Revolute is a rotation:
-                Jv[:,s.dof:s.dof+1] = cross(s.e, (ptip - s.p))
+                Jv[:,s.dof:s.dof+1] = cross(s.e, ptip - s.p)
                 Jw[:,s.dof:s.dof+1] = s.e
             elif s.type is Joint.LINEAR:
                 # Linear is a translation:
                 Jv[:,s.dof:s.dof+1] = s.e
-                Jw[:,s.dof:s.dof+1] = np.zeros((3, 1))
+                Jw[:,s.dof:s.dof+1] = np.zeros((3,1))
 
         # Return the info
         return (ptip, Rtip, Jv, Jw)
@@ -306,14 +286,12 @@ def main(args=None):
         print('Rtip(q):\n', Rtip)
         print('Jv(q):\n',   Jv)
         print('Jw(q):\n',   Jw)
-        print('----------------------------------------')
-
+        print('----------------------------------------');
 
     # Run the tests.
     test(np.radians(np.array([  20.0,   40.0,  -30.0])).reshape(3,1))
     test(np.radians(np.array([  30.0,   30.0,   60.0])).reshape(3,1))
     test(np.radians(np.array([ -45.0,   75.0,  120.0])).reshape(3,1))
-    print('hello world')
 
     # Shutdown the node and ROS.
     node.destroy_node()
