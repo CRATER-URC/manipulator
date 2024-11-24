@@ -32,7 +32,7 @@
   <joint name="placement" type="fixed">
     <parent link="world"/>
     <child  link="joint0base"/>
-    <origin xyz="0 0 0.480" rpy="0 0 0"/>	
+    <origin xyz="0 0 0.450" rpy="0 0 0"/>	
   </joint>
 
   <!--Chassis base top, 48 cm from ground-->
@@ -48,7 +48,7 @@
   <joint name="base0tomotor" type="fixed">
     <parent link="joint0base"/>
     <child  link="joint0motor"/>
-    <origin xyz="0 0 -0.05715" rpy="0 0 0"/>
+    <origin xyz="0 0 -0.5715" rpy="0 0 0"/>
   </joint>
 
   <!-- BASE MOTOR: Thickness: X5 = 31.1mm, X8 = 45.1mm -->
@@ -62,6 +62,7 @@
     </visual> -->
   </link>
 
+<!--need to start from here-->
   <joint name="joint0" type="continuous">
     <parent link="joint0motor"/>
     <child  link="joint1base"/>
@@ -207,7 +208,7 @@
   <joint name="basetomotor4" type="fixed">
     <parent link="joint4base"/>
     <child  link="joint4motor"/>
-    <origin xyz="-0.001778 0.02667 0.030734 " rpy="-1.5708 0 0"/>
+    <origin xyz="-0.001778 0.02667 0.030734 " rpy="0 1.5708 0"/>
   </joint>
 
   <link name="joint4motor">
@@ -242,7 +243,8 @@
 
   <!-- TODO: add gripper dimentions-->
 
-  <joint name="tiprotary" type="continuous">
+<!--TODO: currently 5DOF-->
+  <joint name="tiprotary" type="fixed">
     <parent link="tipbase"/>
     <child  link="tip"/>
     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
@@ -259,6 +261,73 @@
       <material name="cyan"/>
     </visual>
   </link>
+  
+
+<!--TODO need to edit params im assuming, need to have plugins-->
+  <ros2_control name="arm" type="system">
+    <hardware>
+      <plugin>
+        <!-- {Name_Space}/{Class_Name}-->
+      </plugin>
+    </hardware>
+    <joint name="joint0">
+      <command_interface name="position">
+        <param name="min">{-2*pi}</param>
+        <param name="max">{2*pi}</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint1">
+      <command_interface name="position">
+        <param name="min">{-2*pi}</param>
+        <param name="max">{2*pi}</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint2">
+      <command_interface name="position">
+        <param name="min">{-2*pi}</param>
+        <param name="max">{2*pi}</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint3">
+      <command_interface name="position">
+        <param name="min">{-2*pi}</param>
+        <param name="max">{2*pi}</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint4">
+      <command_interface name="position">
+        <param name="min">{-2*pi}</param>
+        <param name="max">{2*pi}</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="position">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <!-- additional joints ...-->
+    <!-- additional hardware/sensors ...-->
+  </ros2_control>
 
 
   

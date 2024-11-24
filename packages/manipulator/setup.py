@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'Arm = manipulator.Arm:main',
             'Keyboard = manipulator.Keyboard:main'
+            'Teleop = manipulator.teleop:main',
         ],
     },
 )
