@@ -76,7 +76,7 @@ class DemoNode(Node):
         
 
         # # Create a temporary subscriber to grab the initial position.
-        self.q0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+        self.q0 = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
         self.p0, _, _, _ = self.chain.fkin(self.q0)
         self.R0 = Roty(np.pi/2)
         self.get_logger().info("Initial positions: %r" % self.q0)
@@ -112,7 +112,7 @@ class DemoNode(Node):
         # self.lam = 10
 
         # Period of sinusoid
-        self.waitpos = np.radians(np.array([95, 5, 95, 5, 5, 5]))
+        self.waitpos = np.radians(np.array([95, 5, 95, 5, 5]))
         self.startpos, self.R0, _, _ = self.chain.fkin(self.waitpos)
         self.startros = self.R0
         self.get_logger().info("start" + str(self.startpos))
@@ -120,7 +120,7 @@ class DemoNode(Node):
         
         self.startpos = np.concatenate((self.startpos, np.zeros((2, 1))))
         self.q = self.q0
-        self.qdot = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+        self.qdot = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
         self.pd = self.startpos
         self.Rd = self.R0
         
@@ -319,10 +319,10 @@ class DemoNode(Node):
 
         # initial move to wait position
         if self.t < self.retT:
-            (self.q, velocity) = goto(self.t, self.retT, np.array(self.q0), np.array([self.q0[0], self.waitpos[1], self.q0[2], self.q0[3], self.q0[4], self.q0[5]]))
+            (self.q, velocity) = goto(self.t, self.retT, np.array(self.q0), np.array([self.q0[0], self.waitpos[1], self.q0[2], self.q0[3], self.q0[4]]))
 
         elif self.t < 2*self.retT:
-            (self.q, velocity) = goto(self.t-self.retT, self.retT, np.array([self.q0[0], self.waitpos[1], self.q0[2], self.q0[3], self.q0[4], self.q0[5]]), self.waitpos)
+            (self.q, velocity) = goto(self.t-self.retT, self.retT, np.array([self.q0[0], self.waitpos[1], self.q0[2], self.q0[3], self.q0[4]]), self.waitpos)
 
         # when goal is detected from from Point node
         elif self.goalpos is not None and len(self.goalpos) == 3:
