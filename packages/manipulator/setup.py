@@ -25,7 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Arm = manipulator.Arm:main',
+            'Arm = manipulator.Arm_5dof:main',
             'Keyboard = manipulator.Keyboard:main'
             'Teleop = manipulator.teleop:main',
         ],

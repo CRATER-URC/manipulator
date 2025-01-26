@@ -220,51 +220,6 @@ class DemoNode(Node):
         # Report.
             self.get_logger().info("Running pose ") # %r, %r, %r" % (pointmsg.x,pointmsg.y,pointmsg.z))
     
-    # def getq(self, pd, vd, Rd, wd):
-    #     """
-    #     Calls inverse kinematics with given pd and vd to return the desired robot q
-    #     """
-    #     # pd = pd.reshape((-1,1))
-    #     # vd = vd.reshape((-1,1))
-        
-    #     qlast  = self.q
-    #     pdlast = self.pd
-    #     Rdlast = self.Rd
-    #     # self.get_logger().info("qlast" + str(qlast))
-    #     (p, R, Jv, Jw) = self.chain.fkin(qlast)
-        
-    #     # self.get_logger().info("p" + str(p))
-        
-    #     vr    = vd + self.lam * ep(pdlast, p)
-    #     wr    = wd + self.lam * eR(Rdlast, R)
-    #     J     = np.vstack((Jv, Jw))
-    #     xrdot = np.vstack((vr, wr))
-        
-    #     # self.get_logger().info("xrdot" + str(xrdot))
-    #     self.get_logger().info("vr" + str(vr) + "\nvd" + str(vd) + "\nep" + str(ep(pdlast, p)))
-        
-    #     Jinv = np.transpose(J) @ np.linalg.pinv((J @ np.transpose(J) + self.gamma**2 * np.eye(len(J))))
-    #     E = np.vstack((ep(pdlast, p), eR(Rdlast, R)))
-    #     # self.get_logger().info("E" + str(E))
-    #     qdot = (Jinv @ (xrdot + self.lam * E)).flatten()
-        
-    #     # self.get_logger().info("qdot" + str(qdot))
-        
-    #     # self.get_logger().info("qdot" + str(qdot) + "\nJ" + str(J) + "\nxrdot" + str(xrdot))
-
-    #     # Integrate the joint position.
-    #     q = qlast + self.dt * qdot
-    #     # q = q[:, 0].reshape((1, -1))[0]
-
-    #     # Save the joint value and desired values for next cycle.
-    #     self.q  = q
-    #     self.pd = pd
-    #     self.Rd = Rd
-        
-    #     (p, R, Jv, Jw) = self.chain.fkin(q)
-    #     # self.get_logger().info("p" + str(p) + "\npd" + str(pd))
-        
-    #     return qdot, q
     
     def getq(self, pd, vd):
         """
@@ -274,11 +229,11 @@ class DemoNode(Node):
         pd = pd.reshape((-1, 1))
         vd = vd.reshape((-1, 1))
 
-        (p, R, Jv, Jw) = self.chain.fkin(self.position.reshape((-1,1)))
+        (p, R, Jv, Jw) = self.chain.fkin(self.q.reshape((-1,1)))
 
         # self.get_logger().info(f"R = {R}")
 
-        angles = np.dot(np.array([[0, 1, 1, -1, 0], [1, 0, 0, 0, -1]]),  self.position.reshape((-1, 1)))
+        angles = np.dot(np.array([[0, 1, 1, -1, 0], [1, 0, 0, 0, -1]]),  self.q.reshape((-1, 1)))
 
         # Extract the angles from the rotation matrix giving the robot's current orientation
         # angle that the tip is rotated in the plane of the table
@@ -302,13 +257,13 @@ class DemoNode(Node):
         qdot = Jinv @ (vd + np.dot(self.lam, ep(pd, p)))
         # self.get_logger().info(f"ep = {ep(pd, p)}")
             
-        q = self.position + self.dt * qdot.reshape((1,-1))[0]
+        q = self.q + self.dt * qdot.reshape((1,-1))[0]
 
         # self.get_logger().info(f"ep = {str(ep(pd, p))}")
         # self.get_logger().info(f"p = {p}")
         # self.get_logger().info(f"pd = {pd}")
         
-        return q, qdot.reshape((1,-1))[0]
+        return qdot.reshape((1,-1))[0], q
     
     # Send a command - called repeatedly by the timer.
     def sendcmd(self):

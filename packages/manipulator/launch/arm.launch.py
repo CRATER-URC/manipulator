@@ -59,7 +59,7 @@ def generate_launch_description():
     return LaunchDescription([
 
         # Start the demo and RVIZ
-        # node_robot_state_publisher_COMMAND, 
-        node_demo
-        # node_rviz,
+        node_robot_state_publisher_COMMAND, 
+        node_demo,
+        node_rviz,
     ])

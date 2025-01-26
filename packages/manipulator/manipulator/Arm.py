@@ -137,7 +137,7 @@ class DemoNode(Node):
         self.acteff = msg.effort
     
     def jointnames(self):
-        return ['joint0', 'joint1', 'joint2', 'joint3', 'joint4'] #, 'tiprotary']
+        return ['joint0', 'joint1', 'joint2', 'joint3', 'joint4', 'tiprotary']
 
     # Shutdown
     def shutdown(self):
