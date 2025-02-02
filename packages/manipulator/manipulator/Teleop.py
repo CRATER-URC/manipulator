@@ -120,10 +120,15 @@ class CustomNode(Node):
         nom[ord('c') & 0x1F] = (0.0, 0.0, 0.0, 0.0, 0.0, -self.wnom)  # c = yaw -
         
         map  = []
-        map += [(0.25*vx, 0.25*wz) for (vx, wz) in nom]  # Control   = slow
-        map += [(0.0 *vx, 0.0 *wz) for (vx, wz) in nom]  # Numbers   = nothing
-        map += [(2.0 *vx, 2.0 *wz) for (vx, wz) in nom]  # Uppercase = fast
-        map += [(1.0 *vx, 1.0 *wz) for (vx, wz) in nom]  # Lowercase = nominal
+        # map += [(0.25*vx, 0.25*wz) for (vx, wz) in nom]  # Control   = slow
+        # map += [(0.0 *vx, 0.0 *wz) for (vx, wz) in nom]  # Numbers   = nothing
+        # map += [(2.0 *vx, 2.0 *wz) for (vx, wz) in nom]  # Uppercase = fast
+        # map += [(1.0 *vx, 1.0 *wz) for (vx, wz) in nom]  # Lowercase = nominal
+
+        map += [(0.25 * x, 0.25 * y, 0.25 * z, 0.25 * r, 0.25 * p, 0.25 * y) for(x, y, z, r, p, y) in nom]  # Control   = slow
+        map += [(0.0 * x, 0.0 * y, 0.0 * z, 0.0 * r, 0.0 * p, 0.0 * y) for (x, y, z, r, p, y) in nom]  # Numbers   = nothing
+        map += [(2.0 * x, 2.0 * y, 2.0 * z, 2.0 * r, 2.0 * p, 2.0 * y) for (x, y, z, r, p, y) in nom]  # Uppercase = fast
+        map += [(1.0 * x, 1.0 * y, 1.0 * z, 1.0 * r, 1.0 * p, 1.0 * y) for (x, y, z, r, p, y) in nom]
 
         # Initialize the velocity and remaining active time.
         key = 0
@@ -164,7 +169,7 @@ class CustomNode(Node):
             screen.addstr(8, 0, "Last pressed 0x%02x = %s" % (key, s))
             screen.clrtoeol()
             screen.addstr(11, 0,
-                          "Sending fwd = %6.3fm/s, spin = %6.3frad/s" % vel)
+                          "Sending fwd = %6.3f %6.3f %6.3f m/s, spin = %6.3f %6.3f %6.3f rad/s" % vel)
 
             # Update the message and publish.
             self.msg.linear.x  = vel[0]

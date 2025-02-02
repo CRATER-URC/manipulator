@@ -26,8 +26,8 @@ setup(
     entry_points={
         'console_scripts': [
             'Arm = manipulator.Arm_5dof:main',
-            'Keyboard = manipulator.Keyboard:main'
-            'Teleop = manipulator.teleop:main',
+            'Keyboard = manipulator.Keyboard:main',
+            'Teleop = manipulator.Teleop:main',
         ],
     },
 )

@@ -173,9 +173,9 @@ class DemoNode(Node):
     def recvinput(self, msg):
         if self.goalpos is None and( msg.linear.x != 0 or msg.linear.y != 0 or msg.linear.z != 0 or msg.angular.x != 0 or msg.angular.y != 0 or msg.angular.z != 0): 
             p, R, _, _ = self.chain.fkin(self.q)
-            self.startpos = p
+            self.startpos = p.flatten()
             self.startros = R
-            self.goalpos = np.array([p[0] + msg.linear.x, p[1] + msg.linear.y, p[2] + msg.linear.z])
+            self.goalpos = np.array([p[0] + msg.linear.x, p[1] + msg.linear.y, p[2] + msg.linear.z]).flatten()
             self.goalrot = R @ Rotz(msg.angular.z) @ Roty(msg.angular.y) @ Rotx(msg.angular.x)
             self.startmov = self.t
             self.get_logger().info("current" + str(p) + "\nreceived msg" + str(msg) + "\ngoing to " +str(self.goalpos))
@@ -190,6 +190,7 @@ class DemoNode(Node):
             self.goalpos = np.array([pointmsg.x, pointmsg.y, pointmsg.z])
             self.startmov = self.t
             self.endpos = None
+            self.get_logger().info("going to " +str(self.goalpos))
         
         # Report.
             self.get_logger().info("Running point %r, %r, %r" % (pointmsg.x,pointmsg.y,pointmsg.z))
@@ -293,7 +294,8 @@ class DemoNode(Node):
             goal_orientation = 0.0
             goal = np.concatenate((self.goalpos, [0.0, goal_orientation]))
             if self.t < self.startmov + self.T:
-                pd, vd = goto(self.t - self.startmov, self.T, self.startpos.reshape((-1,1)), goal.reshape((-1,1)))
+                # TODO need to change to include rotation
+                pd, vd = goto(self.t - self.startmov, self.T, np.concatenate((self.startpos, [0.0, goal_orientation])).reshape((-1,1)), goal.reshape((-1,1)))
                 # self.get_logger().info("pd" + str(pd))
                 # self.get_logger().info("vd" + str(vd))
                 # if self.goalrot is None:
