@@ -272,8 +272,8 @@
     </hardware>
     <joint name="joint0">
       <command_interface name="position">
-        <param name="min">{-2*pi}</param>
-        <param name="max">{2*pi}</param>
+        <param name="min">-6.2832</param>
+        <param name="max">6.2832</param>
       </command_interface>
       <!-- additional command interfaces ... -->
       <state_interface name="position">
@@ -283,8 +283,8 @@
     </joint>
     <joint name="joint1">
       <command_interface name="position">
-        <param name="min">{-2*pi}</param>
-        <param name="max">{2*pi}</param>
+        <param name="min">-6.2832</param>
+        <param name="max">6.2832</param>
       </command_interface>
       <!-- additional command interfaces ... -->
       <state_interface name="position">
@@ -294,8 +294,8 @@
     </joint>
     <joint name="joint2">
       <command_interface name="position">
-        <param name="min">{-2*pi}</param>
-        <param name="max">{2*pi}</param>
+        <param name="min">-6.2832</param>
+        <param name="max">6.2832</param>
       </command_interface>
       <!-- additional command interfaces ... -->
       <state_interface name="position">
@@ -305,8 +305,8 @@
     </joint>
     <joint name="joint3">
       <command_interface name="position">
-        <param name="min">{-2*pi}</param>
-        <param name="max">{2*pi}</param>
+        <param name="min">-6.2832</param>
+        <param name="max">6.2832</param>
       </command_interface>
       <!-- additional command interfaces ... -->
       <state_interface name="position">
@@ -316,8 +316,8 @@
     </joint>
     <joint name="joint4">
       <command_interface name="position">
-        <param name="min">{-2*pi}</param>
-        <param name="max">{2*pi}</param>
+        <param name="min">-6.2832</param>
+        <param name="max">6.2832</param>
       </command_interface>
       <!-- additional command interfaces ... -->
       <state_interface name="position">
