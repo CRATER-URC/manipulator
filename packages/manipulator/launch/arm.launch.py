@@ -23,9 +23,18 @@ def generate_launch_description():
     with open(urdf, 'r') as file:
         robot_description = file.read()
 
+    robot_controllers = os.path.join(pkgdir('manipulator'), 'config/arm_controllers.yaml')
+
 
     ######################################################################
     # PREPARE THE LAUNCH ELEMENTS
+
+    control_node = Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_controllers],
+        output="both",
+    )
 
     # Configure a node for the point_publisher.
     node_robot_state_publisher_COMMAND = Node(
@@ -52,6 +61,35 @@ def generate_launch_description():
         arguments  = ['-d', rvizcfg],
         on_exit    = Shutdown())
 
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["joint_state_broadcaster"],
+    )
+
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["forward_position_controller", "--param-file", robot_controllers],
+    )
+
+    # Delay rviz start after `joint_state_broadcaster`
+    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[node_rviz],
+        )
+    )
+
+    # Delay start of joint_state_broadcaster after `robot_controller`
+    # TODO(anyone): This is a workaround for flaky tests. Remove when fixed.
+    delay_joint_state_broadcaster_after_robot_controller_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=robot_controller_spawner,
+            on_exit=[joint_state_broadcaster_spawner],
+        )
+    )
+
 
     ######################################################################
     # RETURN THE ELEMENTS IN ONE LIST
@@ -60,6 +98,7 @@ def generate_launch_description():
 
         # Start the demo and RVIZ
         node_robot_state_publisher_COMMAND, 
-        node_demo,
+        control_node,
+        # node_demo,
         node_rviz,
     ])
