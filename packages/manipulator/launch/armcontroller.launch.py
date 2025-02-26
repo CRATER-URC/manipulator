@@ -1,68 +1,39 @@
-# Copyright 2021 Stogl Robotics Consulting UG (haftungsbeschränkt)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+import os
 
+from ament_index_python.packages import get_package_share_directory as pkgdir
 
+from launch                      import LaunchDescription
+from launch.actions              import Shutdown, RegisterEventHandler
+from launch_ros.actions          import Node
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command, FindExecutable, PathJoinSubstitution, LaunchConfiguration
 
-from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-
+#
+# Generate the Launch Description
+#
 def generate_launch_description():
-    # Declare arguments
-    declared_arguments = []
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "gui",
-            default_value="true",
-            description="Start RViz2 automatically with this launch file.",
-        )
-    )
 
-    # Initialize Arguments
-    gui = LaunchConfiguration("gui")
+    ######################################################################
+    # LOCATE FILES
 
-    # Get URDF via xacro
-    robot_description_content = Command(
-        [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
-            " ",
-            PathJoinSubstitution(
-                [
-                    FindPackageShare("ros2_control_demo_example_1"),
-                    "urdf",
-                    "rrbot.urdf.xacro",
-                ]
-            ),
-        ]
-    )
-    robot_description = {"robot_description": robot_description_content}
+    # Locate the RVIZ configuration file.
+    rvizcfg = os.path.join(pkgdir('manipulator'), 'rviz/viewurdf.rviz')
 
-    robot_controllers = PathJoinSubstitution(
-        [
-            FindPackageShare("ros2_control_demo_example_1"),
-            "config",
-            "rrbot_controllers.yaml",
-        ]
-    )
-    rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare("ros2_control_demo_description"), "rrbot/rviz", "rrbot.rviz"]
-    )
+    # Locate/load the robot's URDF file (XML).
+    urdf = os.path.join(pkgdir('manipulator'), 'urdf/arm.urdf')
+    with open(urdf, 'r') as file:
+        robot_description = file.read()
+
+    robot_controllers = os.path.join(pkgdir('manipulator'), 'config/arm_controllers.yaml')
+
+
+    ######################################################################
+    # PREPARE THE LAUNCH ELEMENTS
 
     control_node = Node(
         package="controller_manager",
@@ -70,20 +41,31 @@ def generate_launch_description():
         parameters=[robot_controllers],
         output="both",
     )
-    robot_state_pub_node = Node(
-        package="robot_state_publisher",
-        executable="robot_state_publisher",
-        output="both",
-        parameters=[robot_description],
-    )
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config_file],
-        condition=IfCondition(gui),
-    )
+
+    # Configure a node for the point_publisher.
+    node_robot_state_publisher_COMMAND = Node(
+        name       = 'robot_state_publisher', 
+        package    = 'robot_state_publisher',
+        executable = 'robot_state_publisher',
+        output     = 'screen',
+        parameters = [{'robot_description': robot_description}],
+        remappings = [('/joint_states', '/joint_commands')])
+    
+    node_demo = Node(
+        name       = 'Arm',
+        package    = 'manipulator',
+        executable = 'Arm',
+        output     = 'screen',
+        on_exit    = Shutdown())
+
+    # Configure a node for RVIZ
+    node_rviz = Node(
+        name       = 'rviz', 
+        package    = 'rviz2',
+        executable = 'rviz2',
+        output     = 'screen',
+        arguments  = ['-d', rvizcfg],
+        on_exit    = Shutdown())
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -94,14 +76,14 @@ def generate_launch_description():
     robot_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["JointGroupPositionController", "--param-file", robot_controllers],
+        arguments=["forward_position_controller", "--param-file", robot_controllers],
     )
 
     # Delay rviz start after `joint_state_broadcaster`
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
-            on_exit=[rviz_node],
+            on_exit=[node_rviz],
         )
     )
 
@@ -114,12 +96,19 @@ def generate_launch_description():
         )
     )
 
-    nodes = [
-        control_node,
-        robot_state_pub_node,
-        robot_controller_spawner,
-        delay_rviz_after_joint_state_broadcaster_spawner,
-        delay_joint_state_broadcaster_after_robot_controller_spawner,
-    ]
 
-    return LaunchDescription(declared_arguments + nodes)
+    ######################################################################
+    # RETURN THE ELEMENTS IN ONE LIST
+
+    return LaunchDescription([
+
+        # Start the demo and RVIZ
+        node_robot_state_publisher_COMMAND, 
+        control_node,
+        robot_controller_spawner,
+        # joint_state_broadcaster_spawner,
+        delay_joint_state_broadcaster_after_robot_controller_spawner,
+        delay_rviz_after_joint_state_broadcaster_spawner,
+        node_demo,
+        # node_rviz,
+    ])
