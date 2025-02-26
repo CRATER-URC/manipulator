@@ -264,7 +264,7 @@
   
 
 <!--TODO need to edit params im assuming, need to have plugins-->
-  <ros2_control name="arm" type="system">
+  <ros2_control name="arm2" type="system">
     <hardware>
       <plugin>
         <!-- For simulation-->
