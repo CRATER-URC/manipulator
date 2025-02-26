@@ -1,0 +1,20 @@
+# Common artifacts
+build/
+install/
+log/
+.vscode/
+
+# Python-specific
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ROS 2 build and development artifacts
+ament_cmake_index/
+_cmake_test_results/
+pytest_cache/
+.colcon_ignore
+.colcon_test_results
+
+# System files
+.DS_Store
