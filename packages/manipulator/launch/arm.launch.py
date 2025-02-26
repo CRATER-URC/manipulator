@@ -105,6 +105,6 @@ def generate_launch_description():
         # Start the demo and RVIZ
         node_robot_state_publisher_COMMAND, 
         control_node,
-        # node_demo,
+        node_demo,
         node_rviz,
     ])
