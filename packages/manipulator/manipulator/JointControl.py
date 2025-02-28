@@ -30,7 +30,6 @@ class JointControlNode(Node):
         rate       = RATE
         
         self.dt = 1.0 / float(RATE)
-        self.timer = self.create_timer(self.dt, self.sendcmd)
 
         self.get_logger().info("Sending commands with dt of %f seconds (%fHz)" %
                                (self.timer.timer_period_ns * 1e-9, rate))
