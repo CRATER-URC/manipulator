@@ -6,6 +6,12 @@ from joint_control_msg.msg import JointControl
 from sensor_msgs.msg    import JointState
 from std_msgs.msg       import Float64MultiArray
 
+
+#
+#   Definitions
+#
+RATE = 100.0            # Hertz
+
 class JointControlNode(Node):
     def __init__(self, name):
         # Initialize the node, naming it as specified
