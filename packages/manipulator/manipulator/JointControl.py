@@ -52,11 +52,13 @@ class JointControlNode(Node):
         self.msg.data[1] = msg.joint2
         self.msg.data[2] = msg.joint3
         self.msg.data[3] = msg.joint4
-        self.get_logger().info("Publishing message : " + str(self.msg.data))
+        if msg.joint1 != 0.0 or msg.joint2 != 0.0 or msg.joint3 != 0.0 or msg.joint4 != 0.0:
+            self.get_logger().info("Publishing message : " + str(self.msg.data))
         self.velpub.publish(self.msg)
 
     def recvjoint(self, msg):
-        self.get_logger().info("Received joint state message : " + str(msg.velocity))
+        # self.get_logger().info("Received joint state message : " + str(msg.velocity))
+        return
         
 
 def main(args=None):
