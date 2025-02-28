@@ -1,7 +1,7 @@
 import numpy as np
 import rclpy
 
-from rclpy.node         import node
+from rclpy.node         import Node
 from joint_control_msg.msg import JointControl
 from std_msgs.msg       import Float64MultiArray
 
