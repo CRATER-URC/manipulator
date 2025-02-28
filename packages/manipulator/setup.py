@@ -29,6 +29,8 @@ setup(
             'Arm = manipulator.Arm_5dof:main',
             'Keyboard = manipulator.Keyboard:main',
             'Teleop = manipulator.Teleop:main',
+            'JointControl = manipulator.JointControl:main',
+            'JointTeleop = manipulator.JointTeleop:main',
         ],
     },
 )

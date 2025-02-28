@@ -1,0 +1,337 @@
+<?xml version="1.0"?>
+
+<robot name="joints">
+  <!-- *************** Materials / Colors **************** -->
+
+  <material name="white">    <color rgba="1.00 1.00 1.00 1"/>  </material>
+  <material name="gray">     <color rgba="0.60 0.60 0.60 1"/>  </material>
+  <material name="table">    <color rgba="0.85 0.77 0.77 1"/>  </material>
+  <material name="black">    <color rgba="0.00 0.00 0.00 1"/>  </material>
+
+  <material name="red">      <color rgba="1.00 0.00 0.00 1"/>  </material>
+  <material name="green">    <color rgba="0.00 1.00 0.00 1"/>  </material>
+  <material name="blue">     <color rgba="0.00 0.00 1.00 1"/>  </material>
+
+  <material name="cyan">     <color rgba="0.00 1.00 1.00 1"/>  </material>
+  <material name="magenta">  <color rgba="1.00 0.00 1.00 1"/>  </material>
+  <material name="yellow">   <color rgba="1.00 1.00 0.00 1"/>  </material>
+
+  <material name="orange">   <color rgba="1.00 0.65 0.00 1"/>  </material>
+
+  <!-- ******************************************************** -->
+  <!-- ******************* Kinematic Chain ******************** -->
+  <!-- ******************************************************** -->
+  <!-- Note the 'origin' tag in the joints defines the shift and
+       reorientation, i.e. the transform.  For moving joints, this
+       happens before the continuous joint rotates around 'axis'. -->
+
+  <!-- World can't take a visual element (at least in Gazebo). -->
+  <!-- Setting world as Ground (need to figure our height of chasis)-->
+  <link name="world"/>
+
+  <joint name="placement" type="fixed">
+    <parent link="world"/>
+    <child  link="joint0base"/>
+    <origin xyz="0 0 0.450" rpy="0 0 0"/>	
+  </joint>
+
+  <!--Chassis base top, 48 cm from ground-->
+  <link name="joint0base">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <visual>
+      <geometry>
+        <box size = "0.5969 0.3937 0.0008128"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="base0tomotor" type="fixed">
+    <parent link="joint0base"/>
+    <child  link="joint0motor"/>
+    <origin xyz="0 0 -0.5715" rpy="0 0 0"/>
+  </joint>
+
+  <!-- BASE MOTOR: Thickness: X5 = 31.1mm, X8 = 45.1mm -->
+  <link name="joint0motor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <!-- <visual>
+      <geometry>
+        <mesh filename="package://finaldemo/meshes/X8.stl"
+	      scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual> -->
+  </link>
+
+<!--need to start from here-->
+  <joint name="joint0" type="continuous">
+    <parent link="joint0motor"/>
+    <child  link="joint1base"/>
+    <origin xyz="0 0 0.0786638" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+  </joint>
+
+  <!-- L BRACKET: Shift and rotate across the L bracket. -->
+  <link name="joint1base">
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+    <!-- <visual>
+      <geometry>
+        <mesh filename="package://finaldemo/meshes/lowerlbracket.dae"/>
+      </geometry>
+    </visual> -->
+  </link>
+
+  <joint name="base1tomotor" type="fixed">
+    <parent link="joint1base"/>
+    <child  link="joint1motor"/>
+    <origin xyz="0 0.0471932 0.0630936" rpy="-1.5708 0 0"/>
+  </joint>
+
+  <link name="joint1motor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <!-- <visual>
+      <geometry>
+        <mesh filename="package://finaldemo/meshes/X8.stl"
+	      scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="hebi"/>
+    </visual> -->
+  </link>
+
+  <joint name="joint1" type="continuous">
+    <parent link="joint1motor"/>
+    <child  link="link1"/>
+    <origin xyz="0.0001778 0.0270002 0.0635254" rpy="1.5708 0 0"/>
+    <axis   xyz="0 1 0"/>
+  </joint>
+
+  <link name="link1">
+    <visual>
+    <origin xyz="0 0 0.1750" rpy="0 0 0"/>
+      <geometry>
+        <cylinder length="0.350" radius="0.02"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <!-- <visual>
+      <geometry>
+        <mesh filename="package://finaldemo/meshes/link.dae"/>
+      </geometry>
+      <material name="wood"/>
+    </visual> -->
+    <!-- Add a visual element -->
+  </link>
+
+  <joint name="link1tobase" type="fixed">
+    <parent link="link1"/>
+    <child  link="joint2base"/>
+    <origin xyz="0.0 0.0 0.350" rpy="0 0 0"/>
+  </joint>
+
+  <link name="joint2base">
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="basetomotor2" type="fixed">
+    <parent link="joint2base"/>
+    <child  link="joint2motor"/>
+    <origin xyz="-0.001778 0.02667 0.030734 " rpy="-1.5708 0 0"/>
+  </joint>
+
+  <link name="joint2motor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="joint2" type="continuous">
+    <parent link="joint2motor"/>
+    <child  link="link2"/>
+    <origin xyz="-0.0001524 0.0270002 0.0671576" rpy="1.5708 0 0"/>
+    <axis   xyz="0 1 0"/>
+  </joint>
+
+  <link name="link2">
+    <visual>
+    <origin xyz="0 0 0.150" rpy="0 0 0"/>
+    <geometry>
+        <cylinder length="0.300" radius="0.02"/>
+     </geometry>
+    <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="link2tobase" type="fixed">
+    <parent link="link2"/>
+    <child  link="joint3base"/>
+    <origin xyz="0.0 0.0 0.300" rpy="0 0 0"/>
+  </joint>
+
+  <link name="joint3base">
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="basetomotor3" type="fixed">
+    <parent link="joint3base"/>
+    <child  link="joint3motor"/>
+    <origin xyz="-0.001778 0.02667 0.030734 " rpy="-1.5708 0 0"/>
+  </joint>
+
+  <link name="joint3motor">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="joint3" type="continuous">
+    <parent link="joint3motor"/>
+    <child  link="link3"/>
+    <origin xyz="-0.0001524 0.0270002 0.0671576" rpy="1.5708 0 0"/>
+    <axis   xyz="0 1 0"/>
+  </joint>
+
+  <link name="link3">
+    <visual>
+    <origin xyz="0 0 0.050" rpy="0 0 0"/>
+    <geometry>
+    <cylinder length="0.100" radius="0.02"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="link3tobase" type="fixed">
+    <parent link="link3"/>
+    <child  link="joint4base"/>
+    <origin xyz="0.0 0.0 0.100" rpy="0 0 0"/>
+  </joint>
+
+  <link name="joint4base">
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="basetomotor4" type="fixed">
+    <parent link="joint4base"/>
+    <child  link="joint4motor"/>
+    <origin xyz="-0.001778 0.02667 0.030734 " rpy="0 1.5708 0"/>
+  </joint>
+
+  <link name="joint4motor">
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+  </link>
+
+  <joint name="joint4" type="continuous">
+    <parent link="joint4motor"/>
+    <child  link="link4"/>
+    <origin xyz="-0.0001524 0.0270002 0.0671576" rpy="1.5708 0 0"/>
+    <axis   xyz="0 1 0"/>
+  </joint>
+
+  <link name="link4">
+    <visual>
+    <origin xyz="0 0 0.050" rpy="0 0 0"/>
+    <geometry>
+    <cylinder length="0.100" radius="0.02"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+  </link>
+
+  
+  <joint name="link4tobase" type="fixed">
+    <parent link="link4"/>
+    <child  link="tipbase"/>
+    <origin xyz="0.0 0 0.100" rpy="0 0 0"/>
+  </joint>
+
+  <link name = "tipbase"/>
+
+  <!-- TODO: add gripper dimentions-->
+
+<!--TODO: currently 5DOF-->
+  <joint name="tiprotary" type="fixed">
+    <parent link="tipbase"/>
+    <child  link="tip"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <axis   xyz="0 0 1"/>
+  </joint>
+
+
+  <link name="tip">
+    <visual>
+      <origin xyz="0 0 0.025" rpy="0 1.5708 0"/>
+      <geometry>
+      	<cylinder length="0.050" radius="0.025"/>
+      </geometry>
+      <material name="cyan"/>
+    </visual>
+  </link>
+  
+
+<!--TODO need to edit params im assuming, need to have plugins-->
+  <ros2_control name="arm" type="system">
+    <hardware>
+        <!-- For simulation-->
+        <plugin>mock_components/GenericSystem</plugin>
+        <param name="calculate_dynamics">false</param>
+        <param name="custom_interface_with_following_offset"></param>
+        <param name="disable_commands">false</param>
+        <param name="mock_gpio_commands">false</param>
+        <param name="mock_sensor_commands">false</param>
+        <param name="position_state_following_offset">0.0</param>
+    </hardware>
+    <joint name="joint1">
+      <command_interface name="velocity">
+        <param name="min">-2</param>
+        <param name="max">2</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint2">
+      <command_interface name="velocity">
+        <param name="min">-2</param>
+        <param name="max">2</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint3">
+      <command_interface name="velocity">
+        <param name="min">-2</param>
+        <param name="max">2</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <joint name="joint4">
+      <command_interface name="velocity">
+        <param name="min">-2</param>
+        <param name="max">2</param>
+      </command_interface>
+      <!-- additional command interfaces ... -->
+      <state_interface name="velocity">
+        <param name="initial_value">0.0</param>
+      </state_interface>
+      <!-- additional state interfaces ... -->
+    </joint>
+    <!-- additional joints ...-->
+    <!-- additional hardware/sensors ...-->
+  </ros2_control>
+
+
+  
+
+  
+  <!-- *************************************************** -->
+  <!-- *************** Visual Link Elements ************** -->
+  <!-- *************************************************** -->
+  <!-- Note collada .dae files have better color/texture   -->
+  <!-- suppport that STL files.   -->       
+                   
+
+</robot>
