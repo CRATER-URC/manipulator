@@ -3,7 +3,7 @@ controller_manager:
     update_rate: 100  # Hz
 
     velocity_controller:
-      type: velocity_controllers/JointGroupVelocityController
+      type: effort_controllers/JointGroupEffortController
 
 velocity_controller:
   ros__parameters:
