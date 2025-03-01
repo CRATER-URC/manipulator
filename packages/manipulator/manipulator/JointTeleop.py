@@ -18,7 +18,8 @@ import rclpy
 from rclpy.node                 import Node
 from rclpy.time                 import Time
 
-from joint_control_msg.msg     import JointControl
+# from joint_control_msg.msg     import JointControl
+from std_msgs.msg               import Float64MultiArray
 
 
 #
@@ -55,15 +56,17 @@ class CustomNode(Node):
             raise Exception("Illegal Arguments")
 
         # Initialize the (repeating) message data.
-        self.msg = JointControl()
-        self.msg.joint0 = 0.0
-        self.msg.joint1 = 0.0
-        self.msg.joint2 = 0.0
-        self.msg.joint3 = 0.0
-        self.msg.joint4 = 0.0
-        self.msg.joint5 = 0.0
-        self.msg.gripper = 0.0
+        # self.msg = JointControl()
+        # self.msg.joint0 = 0.0
+        # self.msg.joint1 = 0.0
+        # self.msg.joint2 = 0.0
+        # self.msg.joint3 = 0.0
+        # self.msg.joint4 = 0.0
+        # self.msg.joint5 = 0.0
+        # self.msg.gripper = 0.0
 
+        self.msg = Float64MultiArray()
+        self.msg.data = [0.0, 0.0, 0.0, 0.0]
 
         # Create a publisher to send twist commands.
         self.pub = self.create_publisher(JointControl, '/cmd_joint', 10)
@@ -176,13 +179,14 @@ class CustomNode(Node):
                           "Sending j0 = %6.3f, j1 = %6.3f, j2 = %6.3f, j3 = %6.3f, j4 = %6.3f, j5 = %6.3f, grip = %6.3f" % vel)
 
             # Update the message and publish.
-            self.msg.joint0 = vel[0]
-            self.msg.joint1 = vel[1]
-            self.msg.joint2 = vel[2]
-            self.msg.joint3 = vel[3]
-            self.msg.joint4 = vel[4]
-            self.msg.joint5 = vel[5]
-            self.msg.gripper = vel[6]
+            # self.msg.joint0 = vel[0]
+            # self.msg.joint1 = vel[1]
+            # self.msg.joint2 = vel[2]
+            # self.msg.joint3 = vel[3]
+            # self.msg.joint4 = vel[4]
+            # self.msg.joint5 = vel[5]
+            # self.msg.gripper = vel[6]
+            self.msg.data = vel[1:5]
             self.pub.publish(self.msg)
 
             # Spin once to process other items.

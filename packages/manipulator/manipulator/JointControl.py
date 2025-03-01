@@ -2,7 +2,7 @@ import numpy as np
 import rclpy
 
 from rclpy.node         import Node
-from joint_control_msg.msg import JointControl
+# from joint_control_msg.msg import JointControl
 from sensor_msgs.msg    import JointState
 from std_msgs.msg       import Float64MultiArray
 
@@ -35,7 +35,9 @@ class JointControlNode(Node):
         #                        (self.timer.timer_period_ns * 1e-9, rate))
         self.get_logger().info("Running %s" % name)
 
-        self.cmdsub = self.create_subscription(JointControl, '/cmd_joint', self.recvinput, 1)
+        # self.cmdsub = self.create_subscription(JointControl, '/cmd_joint', self.recvinput, 1)
+
+        self.cmdsub = self.create_subscription(Float64MultiArray, '/cmd_joint', self.recvinput, 1)
 
         self.jointsub = self.create_subscription(JointState, '/joint_states', self.recvjoint, 1)
 
@@ -48,11 +50,13 @@ class JointControlNode(Node):
         self.destroy_node()
 
     def recvinput(self, msg):
-        self.msg.data[0] = msg.joint1
-        self.msg.data[1] = msg.joint2
-        self.msg.data[2] = msg.joint3
-        self.msg.data[3] = msg.joint4
-        if msg.joint1 != 0.0 or msg.joint2 != 0.0 or msg.joint3 != 0.0 or msg.joint4 != 0.0:
+        # self.msg.data[0] = msg.joint1
+        # self.msg.data[1] = msg.joint2
+        # self.msg.data[2] = msg.joint3
+        # self.msg.data[3] = msg.joint4
+        # if msg.joint1 != 0.0 or msg.joint2 != 0.0 or msg.joint3 != 0.0 or msg.joint4 != 0.0:
+        self.msg.data = msg.data
+        if msg.data[0] != 0.0 or msg.data[1] != 0.0 or msg.data[2] != 0.0 or msg.data[3] != 0.0:
             self.get_logger().info("Publishing message : " + str(self.msg.data))
         self.velpub.publish(self.msg)
 
